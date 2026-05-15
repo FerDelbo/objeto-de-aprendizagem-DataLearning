@@ -12,7 +12,7 @@ Microempreendedores Individuais (MEIs) e pequenos empresários que possuem pouco
 ## 🔗 Mapa Conceitual
 **Acesse o mapa conceitual do projeto aqui:** `https://cmapcloud.ihmc.us/cmaps/myCmaps.html`
 
-(./mapa-conceitual.jpg)
+![Texto Alternativo](./mapa-conceitual.jpg)
 
 ---
 
