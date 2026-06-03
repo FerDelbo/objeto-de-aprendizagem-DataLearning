@@ -44,7 +44,7 @@ O objeto de aprendizagem visa desenvolver as seguintes habilidades práticas no 
 
 ## Mapa Institucional
 
-(./Objetos/Mapa_institucional.png)
+![Texto Alternativo](./Objetos/Mapa_institucional.png)
 
 ## ⏱️ Metodologia de Avaliação
 A avaliação do progresso do usuário no objeto gamificado será medida através de dois critérios principais:
