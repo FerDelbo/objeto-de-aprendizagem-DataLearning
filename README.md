@@ -12,7 +12,7 @@ Microempreendedores Individuais (MEIs) e pequenos empresários que possuem pouco
 ## 🔗 Mapa Conceitual
 **Acesse o mapa conceitual do projeto aqui:** <https://cmapscloud.ihmc.us/viewer/cmap/22QD6N2HB-JVQ337-18GN0W>
 
-![Texto Alternativo](./Ajustes-Objeto-grupoF.jpg.jpeg)
+![Texto Alternativo](./Objetos/Ajustes-Objeto-grupoF.jpg.jpeg)
 
 ---
 
@@ -44,9 +44,71 @@ O objeto de aprendizagem visa desenvolver as seguintes habilidades práticas no 
 
 ## Mapa Institucional
 
-![Texto Alternativo](./Objetos/Mapa_institucional.png)
+![Texto Alternativo](./Objetos/Modelo_Instrucional_DataLearning.png)
 
 ## ⏱️ Metodologia de Avaliação
 A avaliação do progresso do usuário no objeto gamificado será medida através de dois critérios principais:
 1. **Resultado Alcançado:** O índice de acerto nas escolhas das ferramentas (gráficos/estatística) e a precisão da decisão de negócios tomada no final de cada módulo.
 2. **Tempo de Resposta:** O tempo que o usuário levou para identificar o problema e chegar na solução adequada, simulando a necessidade de agilidade na gestão real de uma pequena empresa.
+
+---
+
+## 🛠️ Instruções e Arquivos Necessários
+
+O objeto de aprendizagem foi desenvolvido em **Python**, utilizando o framework **Streamlit** para a interface interativa.
+
+### Arquivos necessários
+- `app.py` — código-fonte principal do objeto de aprendizagem (telas, lógica dos 3 cenários e sistema de pontuação)
+- `requirements.txt` — lista de dependências do projeto
+
+### Pré-requisitos
+- Python 3.9 ou superior instalado
+- Gerenciador de pacotes `pip`
+
+### Passo a passo para executar localmente
+
+1. Clone o repositório:
+```
+git clone https://github.com/FerDelbo/objeto-de-aprendizagem-DataLearning
+cd objeto-de-aprendizagem-DataLearning
+```
+
+2. (Opcional, recomendado) Crie um ambiente virtual:
+```
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+```
+
+3. Instale as dependências:
+```
+pip install -r requirements.txt
+```
+
+Se o arquivo `requirements.txt` ainda não existir no repositório, crie-o com o seguinte conteúdo mínimo:
+```
+streamlit
+```
+
+4. Execute a aplicação:
+```
+streamlit run app.py
+```
+
+5. O Streamlit abrirá automaticamente uma aba no navegador padrão, geralmente em `http://localhost:8501`.
+
+---
+
+## 📦 Release (Versão Pronta para Uso)
+
+Este projeto ainda não possui uma Release publicada no GitHub. Até que uma Release esteja disponível, a forma de utilização é executar o objeto de aprendizagem localmente seguindo as instruções da seção **Instruções e Arquivos Necessários** acima.
+
+Quando uma versão estável estiver finalizada, ela será publicada na seção [Releases](https://github.com/FerDelbo/objeto-de-aprendizagem-DataLearning/releases) deste repositório, contendo os arquivos empacotados prontos para uso.
+
+---
+
+## 🌐 Acesso via Web
+
+Este objeto de aprendizagem ainda não está publicado como aplicação web acessível por link. Atualmente, o uso é feito exclusivamente via execução local (ver seção **Instruções e Arquivos Necessários**).
+
+Quando publicado (por exemplo, via [Streamlit Community Cloud](https://streamlit.io/cloud)), o link de acesso direto ao objeto de aprendizagem será disponibilizado nesta seção.
