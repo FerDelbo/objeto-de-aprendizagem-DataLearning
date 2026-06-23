@@ -102,4 +102,4 @@ streamlit run app.py
 
 ## 🌐 Acesso via Web
 
-Este objeto de aprendizagem está publicado como aplicação web acessível polo link [Datalearningo]([https://streamlit.io/cloud](https://datalearningo.streamlit.app/))).
+Este objeto de aprendizagem está publicado como aplicação web acessível polo link [Datalearningo][(https://datalearningo.streamlit.app/].
