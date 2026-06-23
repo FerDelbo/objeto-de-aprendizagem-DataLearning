@@ -1,5 +1,7 @@
 import streamlit as st
 import random
+import time
+import pandas as pd
 
 st.set_page_config(page_title="DataLearning App", layout="centered")
 
@@ -480,6 +482,8 @@ def inicializar_fase(numero_fase):
     st.session_state.indice_pergunta = 0
     st.session_state.score = 0
     st.session_state.respostas_computadas = {}
+    st.session_state.tempos_respostas = {}
+    st.session_state.tempo_inicio_pergunta = time.time()
     st.session_state.resposta_dada = None
     st.session_state.exibir_transicao = False
 
@@ -782,7 +786,7 @@ def tela_pratica():
         )
         botoes, chaves = q["botoes"], q["opcoes_chaves"]
 
-    # ---------------- INTERAÇÃO ----------------
+    # ================ INTERAÇÃO ================
     if st.session_state.resposta_dada is None:
         st.write("")
         if len(botoes) == 3:
@@ -793,7 +797,9 @@ def tela_pratica():
         for i, col in enumerate(cols):
             with col:
                 if st.button(botoes[i], use_container_width=True, key=f"btn_opcao_{i}"):
+                    tempo_decorrido = time.time() - st.session_state.tempo_inicio_pergunta
                     st.session_state.resposta_dada = chaves[i]
+                    st.session_state.tempos_respostas[st.session_state.indice_pergunta] = tempo_decorrido
                     st.rerun()
     else:
         if st.session_state.resposta_dada == q["certa"]:
@@ -805,6 +811,7 @@ def tela_pratica():
             if st.session_state.indice_pergunta < (len(st.session_state.ordem_perguntas) - 1):
                 if st.button("➡️ Próximo Desafio", type="primary", use_container_width=True):
                     st.session_state.indice_pergunta += 1
+                    st.session_state.tempo_inicio_pergunta = time.time()
                     st.session_state.resposta_dada = None
                     st.rerun()
             else:
@@ -816,6 +823,7 @@ def tela_pratica():
             st.markdown(f'<div class="feedback-box-incorrect">{q["fb_erro"]}</div>', unsafe_allow_html=True)
             st.write("")
             if st.button("🔄 Analisar os dados novamente", use_container_width=True):
+                st.session_state.tempo_inicio_pergunta = time.time()
                 st.session_state.resposta_dada = None
                 st.rerun()
 
@@ -869,6 +877,34 @@ def tela_resultados():
             st.markdown(
                 f'<div class="resultado-card" style="opacity:0.6;"><b>{conceito["titulo"]}</b> '
                 f'({nome_app}) — ainda não praticado</div>',
+                unsafe_allow_html=True
+            )
+
+    st.write("")
+    st.markdown("#### ⏱️ Tempo por Questão")
+    if hasattr(st.session_state, "tempos_respostas") and st.session_state.tempos_respostas:
+        tempos_lista = []
+        for idx, tempo_seg in st.session_state.tempos_respostas.items():
+            minutos = int(tempo_seg) // 60
+            segundos = int(tempo_seg) % 60
+            tempos_lista.append({
+                "Questão": f"#{idx + 1}",
+                "Tempo": f"{minutos}m {segundos}s"
+            })
+        
+        if tempos_lista:
+            df_tempos = pd.DataFrame(tempos_lista)
+            st.dataframe(df_tempos, use_container_width=True, hide_index=True)
+            
+            tempo_total = sum(st.session_state.tempos_respostas.values())
+            tempo_medio = tempo_total / len(st.session_state.tempos_respostas)
+            min_total = int(tempo_total) // 60
+            seg_total = int(tempo_total) % 60
+            min_medio = int(tempo_medio) // 60
+            seg_medio = int(tempo_medio) % 60
+            st.markdown(
+                f'<div class="resultado-card"><b>⏱️ Resumo de Tempos:</b><br>'
+                f'Tempo total: {min_total}m {seg_total}s | Tempo médio: {min_medio}m {seg_medio}s</div>',
                 unsafe_allow_html=True
             )
 
