@@ -99,16 +99,7 @@ streamlit run app.py
 
 ---
 
-## 📦 Release (Versão Pronta para Uso)
-
-Este projeto ainda não possui uma Release publicada no GitHub. Até que uma Release esteja disponível, a forma de utilização é executar o objeto de aprendizagem localmente seguindo as instruções da seção **Instruções e Arquivos Necessários** acima.
-
-Quando uma versão estável estiver finalizada, ela será publicada na seção [Releases](https://github.com/FerDelbo/objeto-de-aprendizagem-DataLearning/releases) deste repositório, contendo os arquivos empacotados prontos para uso.
-
----
 
 ## 🌐 Acesso via Web
 
-Este objeto de aprendizagem ainda não está publicado como aplicação web acessível por link. Atualmente, o uso é feito exclusivamente via execução local (ver seção **Instruções e Arquivos Necessários**).
-
-Quando publicado (por exemplo, via [Streamlit Community Cloud](https://streamlit.io/cloud)), o link de acesso direto ao objeto de aprendizagem será disponibilizado nesta seção.
+Este objeto de aprendizagem está publicado como aplicação web acessível polo link [Datalearningo]([https://streamlit.io/cloud](https://datalearningo.streamlit.app/))).
