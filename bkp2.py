@@ -511,46 +511,6 @@ def parse_html_table(html):
     return pd.DataFrame(data, columns=headers)
 
 
-def parse_numeric_column(series):
-    cleaned = series.astype(str).str.replace(r"[^0-9.,-]", "", regex=True)
-    def normalize(value):
-        if pd.isna(value):
-            return None
-        value = str(value).strip()
-        if value == "":
-            return None
-        if "." in value and "," in value:
-            value = value.replace(".", "").replace(",", ".")
-        elif "," in value:
-            value = value.replace(",", ".")
-        return value
-    normalized = cleaned.apply(normalize)
-    return pd.to_numeric(normalized, errors="coerce").dropna()
-
-
-def format_valor_pt(value):
-    text = f"{value:,.2f}"
-    return text.replace(",", "X").replace(".", ",").replace("X", ".")
-
-
-def mostrar_media_mediana(q):
-    df = parse_html_table(q["tabela"])
-    if df is None or df.shape[1] < 2:
-        return
-    valores = parse_numeric_column(df[df.columns[1]])
-    if valores.empty:
-        return
-    media = valores.mean()
-    mediana = valores.median()
-    st.markdown(
-    '<div class="planilha-body">'
-    '<strong>Resultado do cálculo:</strong> '
-    f'Média = <span style="font-weight:800;">{format_valor_pt(media)}</span>; '
-    f'Mediana = <span style="font-weight:800;">{format_valor_pt(mediana)}</span>.</div>',
-    unsafe_allow_html=True
-    )
-
-
 def render_visualizacao_estatica_graficos():
     st.markdown("#### 📈 Guia visual estático")
     st.markdown("*Essas imagens ajudam você a identificar o gráfico ideal para cada situação.*")
@@ -577,9 +537,9 @@ def render_visualizacao_estatica_graficos():
         <rect width="220" height="140" rx="16" fill="#ffffff" stroke="#d9e2ef" stroke-width="2"/>
         <line x1="30" y1="110" x2="190" y2="110" stroke="#a8b8d8" stroke-width="2"/>
         <line x1="30" y1="20" x2="30" y2="110" stroke="#a8b8d8" stroke-width="2"/>
-        <rect x="45" y="72" width="24" height="38" rx="6" fill="#1d63d6"/>
-        <rect x="90" y="56" width="24" height="54" rx="6" fill="#4d8df0"/>
-        <rect x="135" y="35" width="24" height="75" rx="6" fill="#7c3aed"/>
+        <rect x="45" y="65" width="25" height="45" rx="6" fill="#1d63d6"/>
+        <rect x="90" y="50" width="25" height="60" rx="6" fill="#4d8df0"/>
+        <rect x="135" y="30" width="25" height="80" rx="6" fill="#7c3aed"/>
       </svg>
     </div>'''
 
@@ -589,13 +549,10 @@ def render_visualizacao_estatica_graficos():
         <rect width="220" height="140" rx="16" fill="#ffffff" stroke="#d9e2ef" stroke-width="2"/>
         <line x1="30" y1="110" x2="190" y2="110" stroke="#a8b8d8" stroke-width="2"/>
         <line x1="30" y1="20" x2="30" y2="110" stroke="#a8b8d8" stroke-width="2"/>
-        <rect x="40" y="85" width="18" height="25" fill="#ffb238"/>
-        <rect x="64" y="70" width="18" height="40" fill="#ff7a59"/>
-        <rect x="88" y="55" width="18" height="55" fill="#4d8df0"/>
-        <rect x="112" y="45" width="18" height="65" fill="#1d63d6"/>
-        <rect x="136" y="40" width="18" height="70" fill="#9b6df0"/>
-        <rect x="160" y="70" width="18" height="40" fill="#64748b"/>
-        <rect x="184" y="90" width="18" height="20" fill="#0f172a"/>
+        <rect x="48" y="75" width="24" height="35" fill="#ffb238" rx="4"/>
+        <rect x="85" y="55" width="24" height="55" fill="#ff7a59" rx="4"/>
+        <rect x="122" y="45" width="24" height="65" fill="#4d8df0" rx="4"/>
+        <rect x="159" y="30" width="24" height="80" fill="#1d63d6" rx="4"/>
       </svg>
     </div>'''
 
@@ -952,7 +909,7 @@ def tela_pratica():
         st.markdown(f'<div class="planilha-header">📊 {fase_info["header_text"]}</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="planilha-toolbar">{progresso}</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="planilha-body">{q["contexto"]}{q["tabela"]}</div>', unsafe_allow_html=True)
-        mostrar_media_mediana(q)
+        render_visualizacao_graficos(q)
         botoes, chaves = fase_info["botoes"], fase_info["opcoes_chaves"]
 
     # ---------------- CENÁRIO 2: DASHBOARD ANALYTICS (3 opções, com Histograma) ----------------
@@ -975,6 +932,7 @@ def tela_pratica():
             f'<div class="financeiro-alerta">⚠️ Use os dados acima para tomar a decisão mais segura para o negócio.</div></div>',
             unsafe_allow_html=True
         )
+        render_visualizacao_graficos(q)
         botoes, chaves = q["botoes"], q["opcoes_chaves"]
 
     # ================ INTERAÇÃO ================

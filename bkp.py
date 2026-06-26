@@ -1,7 +1,6 @@
 import streamlit as st
 import random
 import time
-import re
 import pandas as pd
 
 st.set_page_config(page_title="DataLearning App", layout="centered")
@@ -496,188 +495,9 @@ def ir_para(tela, **kwargs):
     st.rerun()
 
 
-def parse_html_table(html):
-    """Parse a simple HTML table from the stored pergunta strings into a DataFrame."""
-    rows = re.findall(r"<tr>(.*?)</tr>", html, flags=re.S)
-    if not rows:
-        return None
-    headers = re.findall(r"<th>(.*?)</th>", rows[0], flags=re.S)
-    headers = [re.sub(r"<.*?>", "", h).strip() for h in headers]
-    data = []
-    for row in rows[1:]:
-        cols = re.findall(r"<td>(.*?)</td>", row, flags=re.S)
-        clean = [re.sub(r"<.*?>", "", c).strip() for c in cols]
-        data.append(clean)
-    return pd.DataFrame(data, columns=headers)
-
-
-def parse_numeric_column(series):
-    cleaned = series.astype(str).str.replace(r"[^0-9.,-]", "", regex=True)
-    def normalize(value):
-        if pd.isna(value):
-            return None
-        value = str(value).strip()
-        if value == "":
-            return None
-        if "." in value and "," in value:
-            value = value.replace(".", "").replace(",", ".")
-        elif "," in value:
-            value = value.replace(",", ".")
-        return value
-    normalized = cleaned.apply(normalize)
-    return pd.to_numeric(normalized, errors="coerce").dropna()
-
-
-def format_valor_pt(value):
-    text = f"{value:,.2f}"
-    return text.replace(",", "X").replace(".", ",").replace("X", ".")
-
-
-def mostrar_media_mediana(q):
-    df = parse_html_table(q["tabela"])
-    if df is None or df.shape[1] < 2:
-        return
-    valores = parse_numeric_column(df[df.columns[1]])
-    if valores.empty:
-        return
-    media = valores.mean()
-    mediana = valores.median()
-    st.markdown(
-    '<div class="planilha-body">'
-    '<strong>Resultado do cálculo:</strong> '
-    f'Média = <span style="font-weight:800;">{format_valor_pt(media)}</span>; '
-    f'Mediana = <span style="font-weight:800;">{format_valor_pt(mediana)}</span>.</div>',
-    unsafe_allow_html=True
-    )
-
-
-def render_visualizacao_estatica_graficos():
-    st.markdown("#### 📈 Guia visual estático")
-    st.markdown("*Essas imagens ajudam você a identificar o gráfico ideal para cada situação.*")
-    cols = st.columns(3)
-
-    linha_svg = '''
-    <div style="display:flex;justify-content:center;">
-      <svg width="220" height="140" viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
-        <rect width="220" height="140" rx="16" fill="#ffffff" stroke="#d9e2ef" stroke-width="2"/>
-        <line x1="30" y1="110" x2="190" y2="110" stroke="#a8b8d8" stroke-width="2"/>
-        <line x1="30" y1="20" x2="30" y2="110" stroke="#a8b8d8" stroke-width="2"/>
-        <polyline points="30,95 70,80 110,70 150,55 190,45" fill="none" stroke="#4d8df0" stroke-width="4" stroke-linecap="round"/>
-        <circle cx="30" cy="95" r="4" fill="#4d8df0"/>
-        <circle cx="70" cy="80" r="4" fill="#4d8df0"/>
-        <circle cx="110" cy="70" r="4" fill="#4d8df0"/>
-        <circle cx="150" cy="55" r="4" fill="#4d8df0"/>
-        <circle cx="190" cy="45" r="4" fill="#4d8df0"/>
-      </svg>
-    </div>'''
-
-    barras_svg = '''
-    <div style="display:flex;justify-content:center;">
-      <svg width="220" height="140" viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
-        <rect width="220" height="140" rx="16" fill="#ffffff" stroke="#d9e2ef" stroke-width="2"/>
-        <line x1="30" y1="110" x2="190" y2="110" stroke="#a8b8d8" stroke-width="2"/>
-        <line x1="30" y1="20" x2="30" y2="110" stroke="#a8b8d8" stroke-width="2"/>
-        <rect x="45" y="72" width="24" height="38" rx="6" fill="#1d63d6"/>
-        <rect x="90" y="56" width="24" height="54" rx="6" fill="#4d8df0"/>
-        <rect x="135" y="35" width="24" height="75" rx="6" fill="#7c3aed"/>
-      </svg>
-    </div>'''
-
-    hist_svg = '''
-    <div style="display:flex;justify-content:center;">
-      <svg width="220" height="140" viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
-        <rect width="220" height="140" rx="16" fill="#ffffff" stroke="#d9e2ef" stroke-width="2"/>
-        <line x1="30" y1="110" x2="190" y2="110" stroke="#a8b8d8" stroke-width="2"/>
-        <line x1="30" y1="20" x2="30" y2="110" stroke="#a8b8d8" stroke-width="2"/>
-        <rect x="40" y="85" width="18" height="25" fill="#ffb238"/>
-        <rect x="64" y="70" width="18" height="40" fill="#ff7a59"/>
-        <rect x="88" y="55" width="18" height="55" fill="#4d8df0"/>
-        <rect x="112" y="45" width="18" height="65" fill="#1d63d6"/>
-        <rect x="136" y="40" width="18" height="70" fill="#9b6df0"/>
-        <rect x="160" y="70" width="18" height="40" fill="#64748b"/>
-        <rect x="184" y="90" width="18" height="20" fill="#0f172a"/>
-      </svg>
-    </div>'''
-
-    with cols[0]:
-        st.markdown("**Gráfico de Linhas**")
-        st.markdown(linha_svg, unsafe_allow_html=True)
-    with cols[1]:
-        st.markdown("**Gráfico de Barras**")
-        st.markdown(barras_svg, unsafe_allow_html=True)
-    with cols[2]:
-        st.markdown("**Histograma / Distribuição**")
-        st.markdown(hist_svg, unsafe_allow_html=True)
-
-
-def render_visualizacao_graficos(q, fase_tipo):
-    if fase_tipo == "dashboard_analytics":
-        render_visualizacao_estatica_graficos()
-        return
-
-    df = parse_html_table(q["tabela"])
-    if df is None or df.shape[1] < 2:
-        return
-
-    x_col, y_col = df.columns[0], df.columns[1]
-    st.markdown("#### 📈 Gráficos de apoio")
-    cols = st.columns(3)
-
-    with cols[0]:
-        st.markdown("**Gráfico de Linhas**")
-        try:
-            chart_df = df.copy()
-            chart_df[y_col] = pd.to_numeric(
-                chart_df[y_col]
-                .astype(str)
-                .str.replace(r"[^0-9.,-]", "", regex=True)
-                .str.replace(",", "."),
-                errors="coerce"
-            )
-            st.line_chart(chart_df.set_index(x_col)[y_col])
-        except Exception:
-            st.write("(Não foi possível gerar o gráfico de linhas)")
-
-    with cols[1]:
-        st.markdown("**Gráfico de Barras**")
-        try:
-            chart_df = df.copy()
-            chart_df[y_col] = pd.to_numeric(
-                chart_df[y_col]
-                .astype(str)
-                .str.replace(r"[^0-9.,-]", "", regex=True)
-                .str.replace(",", "."),
-                errors="coerce"
-            )
-            st.bar_chart(chart_df.set_index(x_col)[y_col])
-        except Exception:
-            st.write("(Não foi possível gerar o gráfico de barras)")
-
-    with cols[2]:
-        st.markdown("**Histograma / Distribuição**")
-        try:
-            values = pd.to_numeric(
-                df[y_col]
-                .astype(str)
-                .str.replace(r"[^0-9.,-]", "", regex=True)
-                .str.replace(",", "."),
-                errors="coerce"
-            )
-            if values.notna().any():
-                hist = values.dropna()
-                if len(hist) > 1:
-                    hist_intervals = pd.cut(hist, bins=min(5, len(hist)))
-                    counts = hist_intervals.value_counts(sort=False)
-                    hist_df = counts.rename_axis("Faixa").reset_index(name="Contagem").set_index("Faixa")
-                    st.bar_chart(hist_df)
-                else:
-                    st.bar_chart(hist.value_counts())
-            else:
-                st.bar_chart(df.set_index(x_col)[y_col])
-        except Exception:
-            st.write("(Não foi possível gerar o histograma)")
-
-
+# ==========================================================================
+# ESTILOS — TEMA CLARO FIXO, VISUAL EDUCACIONAL/GAMIFICADO
+# ==========================================================================
 
 st.markdown("""
 <style>
@@ -877,12 +697,6 @@ def tela_hub():
 # TELA: CONCEITO
 # ==========================================================================
 
-def render_exemplo_conceito_visualizacao():
-    st.markdown("#### 📊 Exemplo de Visualização")
-    st.markdown("*Use essas imagens estáticas para entender qual gráfico faz mais sentido para cada tipo de dado.*")
-    render_visualizacao_estatica_graficos()
-
-
 def tela_conceito():
     num = st.session_state.conceito_atual
     c = banco_conceitos[num]
@@ -893,9 +707,6 @@ def tela_conceito():
 
     st.markdown(f'<div class="conceito-header" style="background-color:{c["cor"]}">{c["titulo"]}</div>', unsafe_allow_html=True)
     st.markdown(f'<div class="conceito-body">{c["explanatorio"]}', unsafe_allow_html=True)
-
-    if num == 2:
-        render_exemplo_conceito_visualizacao()
 
     st.write("")
     pilulas_html = "".join(
@@ -952,7 +763,6 @@ def tela_pratica():
         st.markdown(f'<div class="planilha-header">📊 {fase_info["header_text"]}</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="planilha-toolbar">{progresso}</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="planilha-body">{q["contexto"]}{q["tabela"]}</div>', unsafe_allow_html=True)
-        mostrar_media_mediana(q)
         botoes, chaves = fase_info["botoes"], fase_info["opcoes_chaves"]
 
     # ---------------- CENÁRIO 2: DASHBOARD ANALYTICS (3 opções, com Histograma) ----------------
@@ -962,7 +772,6 @@ def tela_pratica():
             f'<div class="analytics-body"><span class="analytics-kpi">{progresso}</span>{q["contexto"]}{q["tabela"]}</div>',
             unsafe_allow_html=True
         )
-        render_visualizacao_graficos(q, fase_info["tipo"])
         nomes_opcoes = {"linhas": "📈 Gráfico de Linhas", "barras": "📊 Gráfico de Barras", "histograma": "📉 Histograma"}
         chaves = q["opcoes"]
         botoes = [nomes_opcoes[k] for k in chaves]
